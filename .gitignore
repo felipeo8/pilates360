@@ -1,0 +1,24 @@
+# Environment variables (contains sensitive data)
+.env
+
+# Build outputs
+publish/
+dist/
+bin/
+obj/
+
+# IDE files
+.vscode/
+.vs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database
+*.db
+*.sqlite
+.env.example

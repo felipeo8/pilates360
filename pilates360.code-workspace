@@ -1,0 +1,37 @@
+{
+  "folders": [
+    {
+      "name": "🏢 Root",
+      "path": "."
+    },
+    {
+      "name": "🔧 API Backend",
+      "path": "./PilatesStudio.Api"
+    },
+    {
+      "name": "📱 Mobile App",
+      "path": "./PilatesStudioApp"
+    }
+  ],
+  "settings": {
+    "dotnet.defaultSolution": "PilatesStudio.Api/PilatesStudio.Api.csproj",
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "editor.formatOnSave": true,
+    "files.exclude": {
+      "**/bin": true,
+      "**/obj": true,
+      "**/.expo": true,
+      "**/dist": true,
+      "**/node_modules": true
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-dotnettools.csharp",
+      "ms-dotnettools.csdevkit",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-typescript-next",
+      "expo.vscode-expo-tools"
+    ]
+  }
+}
