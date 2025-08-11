@@ -1,22 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { CompositeNavigationProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useCallback, useEffect, useState } from "react";
+import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import BookingCard from "../components/BookingCard";
+import AlertService from "../services/AlertService";
+import ApiService from "../services/api";
 import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  RefreshControl,
-  Alert,
-} from 'react-native';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { CompositeNavigationProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { Ionicons } from '@expo/vector-icons';
-import { MainTabParamList, RootStackParamList, Booking, ApiError } from '../types';
-import ApiService from '../services/api';
-import BookingCard from '../components/BookingCard';
+  ApiError,
+  Booking,
+  MainTabParamList,
+  RootStackParamList,
+} from "../types";
 
 type BookingsScreenNavigationProp = CompositeNavigationProp<
-  BottomTabNavigationProp<MainTabParamList, 'Bookings'>,
+  BottomTabNavigationProp<MainTabParamList, "Bookings">,
   StackNavigationProp<RootStackParamList>
 >;
 
@@ -35,7 +34,10 @@ const BookingsScreen: React.FC<Props> = ({ navigation }) => {
       setBookings(bookingData);
     } catch (error) {
       const apiError = error as ApiError;
-      Alert.alert('Error', apiError.message || 'Failed to load bookings');
+      AlertService.showAlert(
+        "Error",
+        apiError.message || "Failed to load bookings"
+      );
     }
   };
 
@@ -52,7 +54,7 @@ const BookingsScreen: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener("focus", () => {
       loadBookings();
     });
 
@@ -60,27 +62,31 @@ const BookingsScreen: React.FC<Props> = ({ navigation }) => {
   }, [navigation, loadBookings]);
 
   const handleCancelBooking = async (bookingId: number) => {
+    console.warn("handleCancelBooking");
     try {
       await ApiService.cancelBooking(bookingId);
-      
+
       // Update the booking status locally
-      setBookings(prevBookings =>
-        prevBookings.map(booking =>
+      setBookings((prevBookings) =>
+        prevBookings.map((booking) =>
           booking.id === bookingId
             ? { ...booking, status: 1 } // BookingStatus.Cancelled
             : booking
         )
       );
-      
-      Alert.alert('Success', 'Booking cancelled successfully');
+
+      AlertService.showAlert("Success", "Booking cancelled successfully");
     } catch (error) {
       const apiError = error as ApiError;
-      Alert.alert('Error', apiError.message || 'Failed to cancel booking');
+      AlertService.showAlert(
+        "Error",
+        apiError.message || "Failed to cancel booking"
+      );
     }
   };
 
   const handleBookingPress = (booking: Booking) => {
-    navigation.navigate('ClassDetail', { classId: booking.class.id });
+    navigation.navigate("ClassDetail", { classId: booking.class.id });
   };
 
   const renderBooking = ({ item }: { item: Booking }) => (
@@ -96,18 +102,21 @@ const BookingsScreen: React.FC<Props> = ({ navigation }) => {
       <Ionicons name="bookmark-outline" size={64} color="#d1d5db" />
       <Text style={styles.emptyTitle}>No Bookings Found</Text>
       <Text style={styles.emptyText}>
-        You haven't booked any classes yet. Browse available classes to get started!
+        You haven't booked any classes yet. Browse available classes to get
+        started!
       </Text>
     </View>
   );
 
   // Separate bookings by status
-  const upcomingBookings = bookings.filter(booking => 
-    booking.status === 0 && new Date(booking.class.startTime) > new Date()
+  const upcomingBookings = bookings.filter(
+    (booking) =>
+      booking.status === 0 && new Date(booking.class.startTime) > new Date()
   );
-  
-  const pastBookings = bookings.filter(booking => 
-    booking.status !== 0 || new Date(booking.class.startTime) <= new Date()
+
+  const pastBookings = bookings.filter(
+    (booking) =>
+      booking.status !== 0 || new Date(booking.class.startTime) <= new Date()
   );
 
   const allBookings = [...upcomingBookings, ...pastBookings];
@@ -131,7 +140,9 @@ const BookingsScreen: React.FC<Props> = ({ navigation }) => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListEmptyComponent={!isLoading ? renderEmpty : null}
-        contentContainerStyle={allBookings.length === 0 ? styles.emptyList : styles.list}
+        contentContainerStyle={
+          allBookings.length === 0 ? styles.emptyList : styles.list
+        }
         showsVerticalScrollIndicator={false}
       />
     </View>
@@ -141,24 +152,24 @@ const BookingsScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
   },
   header: {
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: "#e5e7eb",
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
   },
   subtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
     marginTop: 4,
   },
   list: {
@@ -169,21 +180,21 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 32,
   },
   emptyTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#4b5563',
+    fontWeight: "600",
+    color: "#4b5563",
     marginTop: 16,
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 14,
-    color: '#6b7280',
-    textAlign: 'center',
+    color: "#6b7280",
+    textAlign: "center",
     lineHeight: 20,
   },
 });

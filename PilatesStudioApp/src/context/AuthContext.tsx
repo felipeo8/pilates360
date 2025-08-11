@@ -69,9 +69,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       await ApiService.logout();
+      await AsyncStorage.multiRemove(['authToken', 'user']);
       setUser(null);
     } catch (error) {
       console.error('Error during logout:', error);
+      await AsyncStorage.multiRemove(['authToken', 'user']);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }

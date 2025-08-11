@@ -1,74 +1,81 @@
-import React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
 import {
-  View,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Alert,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext';
+  View,
+} from "react-native";
+import { useAuth } from "../context/AuthContext";
+import AlertService from "../services/AlertService";
 
 const ProfileScreen: React.FC = () => {
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', onPress: logout, style: 'destructive' },
-      ]
+    AlertService.showDestructiveConfirm(
+      "Logout",
+      "Are you sure you want to logout?",
+      "Logout",
+      logout
     );
   };
 
   const formatDateOfBirth = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString([], {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const menuItems = [
     {
-      icon: 'person-outline' as keyof typeof Ionicons.glyphMap,
-      title: 'Edit Profile',
-      subtitle: 'Update your personal information',
-      onPress: () => Alert.alert('Coming Soon', 'This feature will be available soon'),
+      icon: "person-outline" as keyof typeof Ionicons.glyphMap,
+      title: "Edit Profile",
+      subtitle: "Update your personal information",
+      onPress: () =>
+        AlertService.showAlert("Coming Soon", "This feature will be available soon"),
     },
     {
-      icon: 'card-outline' as keyof typeof Ionicons.glyphMap,
-      title: 'Payment Methods',
-      subtitle: 'Manage your payment options',
-      onPress: () => Alert.alert('Coming Soon', 'This feature will be available soon'),
+      icon: "card-outline" as keyof typeof Ionicons.glyphMap,
+      title: "Payment Methods",
+      subtitle: "Manage your payment options",
+      onPress: () =>
+        AlertService.showAlert("Coming Soon", "This feature will be available soon"),
     },
     {
-      icon: 'gift-outline' as keyof typeof Ionicons.glyphMap,
-      title: 'Packages & Credits',
-      subtitle: 'View your membership packages',
-      onPress: () => Alert.alert('Coming Soon', 'This feature will be available soon'),
+      icon: "gift-outline" as keyof typeof Ionicons.glyphMap,
+      title: "Packages & Credits",
+      subtitle: "View your membership packages",
+      onPress: () =>
+        AlertService.showAlert("Coming Soon", "This feature will be available soon"),
     },
     {
-      icon: 'notifications-outline' as keyof typeof Ionicons.glyphMap,
-      title: 'Notifications',
-      subtitle: 'Manage notification preferences',
-      onPress: () => Alert.alert('Coming Soon', 'This feature will be available soon'),
+      icon: "notifications-outline" as keyof typeof Ionicons.glyphMap,
+      title: "Notifications",
+      subtitle: "Manage notification preferences",
+      onPress: () =>
+        AlertService.showAlert("Coming Soon", "This feature will be available soon"),
     },
     {
-      icon: 'help-circle-outline' as keyof typeof Ionicons.glyphMap,
-      title: 'Help & Support',
-      subtitle: 'Get help or contact support',
-      onPress: () => Alert.alert('Coming Soon', 'This feature will be available soon'),
+      icon: "help-circle-outline" as keyof typeof Ionicons.glyphMap,
+      title: "Help & Support",
+      subtitle: "Get help or contact support",
+      onPress: () =>
+        AlertService.showAlert("Coming Soon", "This feature will be available soon"),
     },
     {
-      icon: 'information-circle-outline' as keyof typeof Ionicons.glyphMap,
-      title: 'About',
-      subtitle: 'App version and information',
-      onPress: () => Alert.alert('About', 'Pilates Studio App v1.0.0\nBuilt with React Native'),
+      icon: "information-circle-outline" as keyof typeof Ionicons.glyphMap,
+      title: "About",
+      subtitle: "App version and information",
+      onPress: () =>
+        AlertService.showAlert(
+          "About",
+          "Pilates Studio App v1.0.0\nBuilt with React Native"
+        ),
     },
   ];
 
@@ -82,14 +89,15 @@ const ProfileScreen: React.FC = () => {
         <View style={styles.userInfo}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>
-              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+              {user.firstName.charAt(0)}
+              {user.lastName.charAt(0)}
             </Text>
           </View>
           <Text style={styles.userName}>
             {user.firstName} {user.lastName}
           </Text>
           <Text style={styles.userEmail}>{user.email}</Text>
-          
+
           <View style={styles.userDetails}>
             {user.phoneNumber && (
               <View style={styles.detailRow}>
@@ -100,7 +108,9 @@ const ProfileScreen: React.FC = () => {
             {user.dateOfBirth && (
               <View style={styles.detailRow}>
                 <Ionicons name="calendar-outline" size={16} color="#6b7280" />
-                <Text style={styles.detailText}>{formatDateOfBirth(user.dateOfBirth)}</Text>
+                <Text style={styles.detailText}>
+                  {formatDateOfBirth(user.dateOfBirth)}
+                </Text>
               </View>
             )}
           </View>
@@ -147,24 +157,24 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
   },
   header: {
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: "#e5e7eb",
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
   },
   userInfo: {
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
+    backgroundColor: "#ffffff",
+    alignItems: "center",
     padding: 24,
     marginBottom: 16,
   },
@@ -172,65 +182,65 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#6366f1',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#6366f1",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 16,
   },
   avatarText: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ffffff',
+    fontWeight: "bold",
+    color: "#ffffff",
   },
   userName: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 16,
-    color: '#6b7280',
+    color: "#6b7280",
     marginBottom: 16,
   },
   userDetails: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   detailText: {
     marginLeft: 8,
     fontSize: 14,
-    color: '#4b5563',
+    color: "#4b5563",
   },
   menu: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     marginBottom: 16,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: "#f3f4f6",
   },
   menuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   menuItemIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f0f0ff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#f0f0ff",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12,
   },
   menuItemContent: {
@@ -238,39 +248,39 @@ const styles = StyleSheet.create({
   },
   menuItemTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1f2937',
+    fontWeight: "600",
+    color: "#1f2937",
     marginBottom: 4,
   },
   menuItemSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   logoutSection: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     marginBottom: 16,
   },
   logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   logoutText: {
     marginLeft: 8,
     fontSize: 16,
-    fontWeight: '600',
-    color: '#ef4444',
+    fontWeight: "600",
+    color: "#ef4444",
   },
   footer: {
     padding: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   footerText: {
     fontSize: 14,
-    color: '#6b7280',
-    textAlign: 'center',
-    fontStyle: 'italic',
+    color: "#6b7280",
+    textAlign: "center",
+    fontStyle: "italic",
   },
 });
 

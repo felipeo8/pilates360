@@ -1,7 +1,8 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Booking, BookingStatus } from '../types';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AlertService from "../services/AlertService";
+import { Booking, BookingStatus } from "../types";
 
 interface Props {
   booking: Booking;
@@ -13,54 +14,52 @@ const BookingCard: React.FC<Props> = ({ booking, onCancel, onPress }) => {
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return {
-      date: date.toLocaleDateString([], { 
-        weekday: 'short',
-        month: 'short', 
-        day: 'numeric',
-        year: 'numeric'
+      date: date.toLocaleDateString([], {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
       }),
-      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      time: date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
   };
 
   const getStatusStyle = (status: BookingStatus) => {
     switch (status) {
       case BookingStatus.Confirmed:
-        return { backgroundColor: '#10b981', color: '#ffffff' };
+        return { backgroundColor: "#10b981", color: "#ffffff" };
       case BookingStatus.Cancelled:
-        return { backgroundColor: '#ef4444', color: '#ffffff' };
+        return { backgroundColor: "#ef4444", color: "#ffffff" };
       case BookingStatus.Completed:
-        return { backgroundColor: '#6b7280', color: '#ffffff' };
+        return { backgroundColor: "#6b7280", color: "#ffffff" };
       case BookingStatus.NoShow:
-        return { backgroundColor: '#f59e0b', color: '#ffffff' };
+        return { backgroundColor: "#f59e0b", color: "#ffffff" };
       default:
-        return { backgroundColor: '#6b7280', color: '#ffffff' };
+        return { backgroundColor: "#6b7280", color: "#ffffff" };
     }
   };
 
   const getStatusText = (status: BookingStatus) => {
     switch (status) {
       case BookingStatus.Confirmed:
-        return 'Confirmed';
+        return "Confirmed";
       case BookingStatus.Cancelled:
-        return 'Cancelled';
+        return "Cancelled";
       case BookingStatus.Completed:
-        return 'Completed';
+        return "Completed";
       case BookingStatus.NoShow:
-        return 'No Show';
+        return "No Show";
       default:
-        return 'Unknown';
+        return "Unknown";
     }
   };
 
   const handleCancelPress = () => {
-    Alert.alert(
-      'Cancel Booking',
+    AlertService.showDestructiveConfirm(
+      "Cancel Booking",
       `Are you sure you want to cancel your booking for "${booking.class.name}"?`,
-      [
-        { text: 'No', style: 'cancel' },
-        { text: 'Yes, Cancel', onPress: () => onCancel(booking.id), style: 'destructive' },
-      ]
+      "Yes, Cancel",
+      () => onCancel(booking.id)
     );
   };
 
@@ -76,7 +75,12 @@ const BookingCard: React.FC<Props> = ({ booking, onCancel, onPress }) => {
           <Text style={styles.className}>{booking.class.name}</Text>
           <Text style={styles.classType}>{booking.class.classTypeName}</Text>
         </View>
-        <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
+        <View
+          style={[
+            styles.statusBadge,
+            { backgroundColor: statusStyle.backgroundColor },
+          ]}
+        >
           <Text style={[styles.statusText, { color: statusStyle.color }]}>
             {getStatusText(booking.status)}
           </Text>
@@ -135,12 +139,12 @@ const BookingCard: React.FC<Props> = ({ booking, onCancel, onPress }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -150,9 +154,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 12,
   },
   headerLeft: {
@@ -161,14 +165,14 @@ const styles = StyleSheet.create({
   },
   className: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
     marginBottom: 4,
   },
   classType: {
     fontSize: 14,
-    color: '#6366f1',
-    fontWeight: '500',
+    color: "#6366f1",
+    fontWeight: "500",
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -177,28 +181,28 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   details: {
     marginBottom: 12,
   },
   detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   detailText: {
     marginLeft: 8,
     fontSize: 14,
-    color: '#4b5563',
+    color: "#4b5563",
     flex: 1,
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
+    borderTopColor: "#f3f4f6",
     paddingTop: 12,
   },
   footerLeft: {
@@ -206,20 +210,20 @@ const styles = StyleSheet.create({
   },
   bookingDate: {
     fontSize: 12,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   cancelButton: {
-    backgroundColor: '#fef2f2',
+    backgroundColor: "#fef2f2",
     borderWidth: 1,
-    borderColor: '#fecaca',
+    borderColor: "#fecaca",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
   },
   cancelButtonText: {
     fontSize: 14,
-    color: '#ef4444',
-    fontWeight: '600',
+    color: "#ef4444",
+    fontWeight: "600",
   },
 });
 

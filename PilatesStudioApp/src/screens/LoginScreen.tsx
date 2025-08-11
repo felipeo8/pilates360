@@ -1,34 +1,37 @@
-import React, { useState } from 'react';
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useAuth } from '../context/AuthContext';
-import { RootStackParamList, ApiError } from '../types';
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useAuth } from "../context/AuthContext";
+import AlertService from "../services/AlertService";
+import { ApiError, RootStackParamList } from "../types";
 
-type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
+type LoginScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Login"
+>;
 
 interface Props {
   navigation: LoginScreenNavigationProp;
 }
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please fill in all fields');
+      AlertService.showAlert("Error", "Please fill in all fields");
       return;
     }
 
@@ -37,7 +40,10 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       await login({ email: email.trim(), password });
     } catch (error) {
       const apiError = error as ApiError;
-      Alert.alert('Login Failed', apiError.message || 'An error occurred during login');
+      AlertService.showAlert(
+        "Login Failed",
+        apiError.message || "An error occurred during login"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +52,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.content}>
@@ -80,14 +86,14 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               disabled={isLoading}
             >
               <Text style={styles.buttonText}>
-                {isLoading ? 'Signing In...' : 'Sign In'}
+                {isLoading ? "Signing In..." : "Sign In"}
               </Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <TouchableOpacity onPress={() => navigation.navigate("Register")}>
               <Text style={styles.linkText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
@@ -100,7 +106,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -108,61 +114,61 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 24,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 8,
-    color: '#1f2937',
+    color: "#1f2937",
   },
   subtitle: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 40,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   form: {
     marginBottom: 32,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: "#d1d5db",
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
     marginBottom: 16,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
   },
   button: {
-    backgroundColor: '#6366f1',
+    backgroundColor: "#6366f1",
     borderRadius: 8,
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 8,
   },
   buttonDisabled: {
-    backgroundColor: '#9ca3af',
+    backgroundColor: "#9ca3af",
   },
   buttonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   footerText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   linkText: {
     fontSize: 14,
-    color: '#6366f1',
-    fontWeight: '600',
+    color: "#6366f1",
+    fontWeight: "600",
   },
 });
 

@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
   ActivityIndicator,
-} from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-import { RootStackParamList, Class, ApiError } from '../types';
-import ApiService from '../services/api';
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import AlertService from "../services/AlertService";
+import ApiService from "../services/api";
+import { ApiError, Class, RootStackParamList } from "../types";
 
-type ClassDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ClassDetail'>;
-type ClassDetailScreenRouteProp = RouteProp<RootStackParamList, 'ClassDetail'>;
+type ClassDetailScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "ClassDetail"
+>;
+type ClassDetailScreenRouteProp = RouteProp<RootStackParamList, "ClassDetail">;
 
 interface Props {
   navigation: ClassDetailScreenNavigationProp;
@@ -38,7 +41,11 @@ const ClassDetailScreen: React.FC<Props> = ({ navigation, route }) => {
       setClassDetail(classData);
     } catch (error) {
       const apiError = error as ApiError;
-      Alert.alert('Error', apiError.message || 'Failed to load class details');
+      AlertService.showAlert(
+        "Error",
+        apiError.message || "Failed to load class details",
+        () => {}
+      );
       navigation.goBack();
     } finally {
       setIsLoading(false);
@@ -48,13 +55,11 @@ const ClassDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   const handleBookClass = async () => {
     if (!classDetail) return;
 
-    Alert.alert(
-      'Confirm Booking',
+    AlertService.showDestructiveConfirm(
+      "Confirm Booking",
       `Are you sure you want to book "${classDetail.name}"?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Book', onPress: () => confirmBooking() },
-      ]
+      "OK",
+      confirmBooking
     );
   };
 
@@ -64,15 +69,19 @@ const ClassDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     try {
       setIsBooking(true);
       await ApiService.createBooking({ classId: classDetail.id });
-      
-      Alert.alert(
-        'Booking Confirmed!',
+
+      AlertService.showConfirm(
+        "Booking Confirmed!",
         `You have successfully booked "${classDetail.name}".`,
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
+        navigation.goBack
       );
     } catch (error) {
       const apiError = error as ApiError;
-      Alert.alert('Booking Failed', apiError.message || 'Failed to book the class');
+      AlertService.showAlert(
+        "Booking Failed",
+        apiError.message || "Failed to book the class",
+        () => {}
+      );
     } finally {
       setIsBooking(false);
     }
@@ -81,30 +90,33 @@ const ClassDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return {
-      date: date.toLocaleDateString([], { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+      date: date.toLocaleDateString([], {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       }),
-      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      time: date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
   };
 
   const getDuration = () => {
-    if (!classDetail) return '';
+    if (!classDetail) return "";
     const start = new Date(classDetail.startTime);
     const end = new Date(classDetail.endTime);
-    const diffMinutes = Math.floor((end.getTime() - start.getTime()) / (1000 * 60));
+    const diffMinutes = Math.floor(
+      (end.getTime() - start.getTime()) / (1000 * 60)
+    );
     return `${diffMinutes} minutes`;
   };
 
   const getAvailabilityColor = () => {
-    if (!classDetail) return '#6b7280';
-    const percentage = (classDetail.availableSpots / classDetail.maxCapacity) * 100;
-    if (percentage > 50) return '#10b981'; // Green
-    if (percentage > 25) return '#f59e0b'; // Yellow
-    return '#ef4444'; // Red
+    if (!classDetail) return "#6b7280";
+    const percentage =
+      (classDetail.availableSpots / classDetail.maxCapacity) * 100;
+    if (percentage > 50) return "#10b981"; // Green
+    if (percentage > 25) return "#f59e0b"; // Yellow
+    return "#ef4444"; // Red
   };
 
   if (isLoading) {
@@ -138,13 +150,13 @@ const ClassDetailScreen: React.FC<Props> = ({ navigation, route }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.description}>
-            {classDetail.description || 'No description available.'}
+            {classDetail.description || "No description available."}
           </Text>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Details</Text>
-          
+
           <View style={styles.detailRow}>
             <Ionicons name="calendar-outline" size={20} color="#6366f1" />
             <View style={styles.detailContent}>
@@ -167,7 +179,9 @@ const ClassDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             <Ionicons name="person-outline" size={20} color="#6366f1" />
             <View style={styles.detailContent}>
               <Text style={styles.detailLabel}>Instructor</Text>
-              <Text style={styles.detailValue}>{classDetail.instructorName}</Text>
+              <Text style={styles.detailValue}>
+                {classDetail.instructorName}
+              </Text>
             </View>
           </View>
 
@@ -184,14 +198,20 @@ const ClassDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             <View style={styles.detailContent}>
               <Text style={styles.detailLabel}>Availability</Text>
               <View style={styles.availabilityRow}>
-                <View 
+                <View
                   style={[
-                    styles.availabilityDot, 
-                    { backgroundColor: getAvailabilityColor() }
-                  ]} 
+                    styles.availabilityDot,
+                    { backgroundColor: getAvailabilityColor() },
+                  ]}
                 />
-                <Text style={[styles.detailValue, { color: getAvailabilityColor() }]}>
-                  {classDetail.availableSpots} of {classDetail.maxCapacity} spots available
+                <Text
+                  style={[
+                    styles.detailValue,
+                    { color: getAvailabilityColor() },
+                  ]}
+                >
+                  {classDetail.availableSpots} of {classDetail.maxCapacity}{" "}
+                  spots available
                 </Text>
               </View>
             </View>
@@ -217,9 +237,11 @@ const ClassDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           disabled={!canBook || isBooking}
         >
           <Text style={styles.bookButtonText}>
-            {isBooking ? 'Booking...' : 
-             !canBook ? 'Class Full' : 
-             'Book This Class'}
+            {isBooking
+              ? "Booking..."
+              : !canBook
+              ? "Class Full"
+              : "Book This Class"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -230,21 +252,21 @@ const ClassDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   content: {
     flex: 1,
@@ -252,38 +274,38 @@ const styles = StyleSheet.create({
   header: {
     padding: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: "#e5e7eb",
   },
   className: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
     marginBottom: 8,
   },
   classType: {
     fontSize: 16,
-    color: '#6366f1',
-    fontWeight: '600',
+    color: "#6366f1",
+    fontWeight: "600",
   },
   section: {
     padding: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: "#e5e7eb",
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#1f2937',
+    fontWeight: "600",
+    color: "#1f2937",
     marginBottom: 16,
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#4b5563',
+    color: "#4b5563",
   },
   detailRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 20,
   },
   detailContent: {
@@ -292,22 +314,22 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
     marginBottom: 4,
   },
   detailValue: {
     fontSize: 16,
-    color: '#1f2937',
-    fontWeight: '500',
+    color: "#1f2937",
+    fontWeight: "500",
   },
   price: {
     fontSize: 20,
-    color: '#10b981',
-    fontWeight: 'bold',
+    color: "#10b981",
+    fontWeight: "bold",
   },
   availabilityRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   availabilityDot: {
     width: 8,
@@ -318,21 +340,21 @@ const styles = StyleSheet.create({
   footer: {
     padding: 24,
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
+    borderTopColor: "#e5e7eb",
   },
   bookButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: "#6366f1",
     borderRadius: 12,
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   bookButtonDisabled: {
-    backgroundColor: '#9ca3af',
+    backgroundColor: "#9ca3af",
   },
   bookButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

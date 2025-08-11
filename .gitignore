@@ -22,3 +22,6 @@ Thumbs.db
 *.db
 *.sqlite
 .env.example
+
+# exclude the react published files
+PilatesStudio.Api/wwwroot

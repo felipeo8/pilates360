@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useAuth } from '../context/AuthContext';
-import { RootStackParamList, ApiError } from '../types';
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useAuth } from "../context/AuthContext";
+import AlertService from "../services/AlertService";
+import { ApiError, RootStackParamList } from "../types";
 
-type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
+type RegisterScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Register"
+>;
 
 interface Props {
   navigation: RegisterScreenNavigationProp;
@@ -22,42 +25,58 @@ interface Props {
 
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phoneNumber: '',
-    dateOfBirth: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phoneNumber: "",
+    dateOfBirth: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
 
   const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const validateForm = (): boolean => {
-    const { firstName, lastName, email, password, confirmPassword, dateOfBirth } = formData;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      dateOfBirth,
+    } = formData;
 
-    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password || !dateOfBirth) {
-      Alert.alert('Error', 'Please fill in all required fields');
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !email.trim() ||
+      !password ||
+      !dateOfBirth
+    ) {
+      AlertService.showAlert("Error", "Please fill in all required fields");
       return false;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      AlertService.showAlert("Error", "Passwords do not match");
       return false;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long');
+      AlertService.showAlert(
+        "Error",
+        "Password must be at least 6 characters long"
+      );
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      AlertService.showAlert("Error", "Please enter a valid email address");
       return false;
     }
 
@@ -70,7 +89,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     try {
       setIsLoading(true);
       const { confirmPassword, ...registerData } = formData;
-      
+
       // Format date if needed (assuming YYYY-MM-DD format)
       const formattedData = {
         ...registerData,
@@ -84,7 +103,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       await register(formattedData);
     } catch (error) {
       const apiError = error as ApiError;
-      Alert.alert('Registration Failed', apiError.message || 'An error occurred during registration');
+      AlertService.showAlert(
+        "Registration Failed",
+        apiError.message || "An error occurred during registration"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +115,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.content}>
@@ -106,7 +128,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                 style={[styles.input, styles.halfInput]}
                 placeholder="First Name"
                 value={formData.firstName}
-                onChangeText={(value) => updateFormData('firstName', value)}
+                onChangeText={(value) => updateFormData("firstName", value)}
                 autoCapitalize="words"
                 editable={!isLoading}
               />
@@ -114,7 +136,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                 style={[styles.input, styles.halfInput]}
                 placeholder="Last Name"
                 value={formData.lastName}
-                onChangeText={(value) => updateFormData('lastName', value)}
+                onChangeText={(value) => updateFormData("lastName", value)}
                 autoCapitalize="words"
                 editable={!isLoading}
               />
@@ -124,7 +146,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.input}
               placeholder="Email"
               value={formData.email}
-              onChangeText={(value) => updateFormData('email', value)}
+              onChangeText={(value) => updateFormData("email", value)}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -135,7 +157,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.input}
               placeholder="Phone Number (optional)"
               value={formData.phoneNumber}
-              onChangeText={(value) => updateFormData('phoneNumber', value)}
+              onChangeText={(value) => updateFormData("phoneNumber", value)}
               keyboardType="phone-pad"
               editable={!isLoading}
             />
@@ -144,7 +166,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.input}
               placeholder="Date of Birth (YYYY-MM-DD)"
               value={formData.dateOfBirth}
-              onChangeText={(value) => updateFormData('dateOfBirth', value)}
+              onChangeText={(value) => updateFormData("dateOfBirth", value)}
               editable={!isLoading}
             />
 
@@ -152,7 +174,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.input}
               placeholder="Password"
               value={formData.password}
-              onChangeText={(value) => updateFormData('password', value)}
+              onChangeText={(value) => updateFormData("password", value)}
               secureTextEntry
               editable={!isLoading}
             />
@@ -161,7 +183,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.input}
               placeholder="Confirm Password"
               value={formData.confirmPassword}
-              onChangeText={(value) => updateFormData('confirmPassword', value)}
+              onChangeText={(value) => updateFormData("confirmPassword", value)}
               secureTextEntry
               editable={!isLoading}
             />
@@ -172,14 +194,14 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               disabled={isLoading}
             >
               <Text style={styles.buttonText}>
-                {isLoading ? 'Creating Account...' : 'Create Account'}
+                {isLoading ? "Creating Account..." : "Create Account"}
               </Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
               <Text style={styles.linkText}>Sign In</Text>
             </TouchableOpacity>
           </View>
@@ -192,7 +214,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -200,68 +222,68 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 24,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 8,
-    color: '#1f2937',
+    color: "#1f2937",
   },
   subtitle: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 40,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   form: {
     marginBottom: 32,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: "#d1d5db",
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
     marginBottom: 16,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
   },
   halfInput: {
-    width: '48%',
+    width: "48%",
   },
   button: {
-    backgroundColor: '#6366f1',
+    backgroundColor: "#6366f1",
     borderRadius: 8,
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 8,
   },
   buttonDisabled: {
-    backgroundColor: '#9ca3af',
+    backgroundColor: "#9ca3af",
   },
   buttonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   footerText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   linkText: {
     fontSize: 14,
-    color: '#6366f1',
-    fontWeight: '600',
+    color: "#6366f1",
+    fontWeight: "600",
   },
 });
 
