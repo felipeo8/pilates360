@@ -24,4 +24,4 @@ Thumbs.db
 .env.example
 
 # exclude the react published files
-PilatesStudio.Api/wwwroot
+PilatesStudio.Api/wwwroot/
